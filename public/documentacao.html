@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ZUNGA — Documentação Completa da Plataforma</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background:#f8fafc; color:#1e293b; }
+
+  /* PRINT */
+  @media print {
+    .no-print { display:none !important; }
+    .page-break { page-break-before: always; }
+    body { background:#fff; }
+    .section { box-shadow:none !important; border:1px solid #e2e8f0; }
+  }
+
+  /* LAYOUT */
+  .container { max-width:900px; margin:0 auto; padding:20px; }
+
+  /* CAPA */
+  .cover {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #ea580c 100%);
+    min-height:100vh; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; text-align:center;
+    padding:60px 40px; page-break-after:always;
+  }
+  .cover-logo { font-size:72px; margin-bottom:16px; }
+  .cover-title { font-size:52px; font-weight:900; color:#fff; letter-spacing:-1px; }
+  .cover-title span { color:#f97316; }
+  .cover-sub { font-size:20px; color:#94a3b8; margin-top:12px; }
+  .cover-badge {
+    margin-top:40px; background:rgba(249,115,22,0.2); border:1px solid #f97316;
+    color:#f97316; padding:10px 28px; border-radius:999px; font-size:14px; font-weight:600;
+  }
+  .cover-meta { margin-top:60px; color:#64748b; font-size:13px; }
+
+  /* ÍNDICE */
+  .toc { background:#fff; border-radius:16px; padding:36px 40px; margin:24px 0; box-shadow:0 1px 8px rgba(0,0,0,.06); }
+  .toc h2 { font-size:22px; font-weight:800; color:#1e293b; margin-bottom:20px; padding-bottom:12px; border-bottom:2px solid #f97316; }
+  .toc-item { display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px dashed #e2e8f0; }
+  .toc-num { background:#f97316; color:#fff; width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; shrink:0; flex-shrink:0; }
+  .toc-label { font-size:14px; color:#374151; font-weight:500; flex:1; }
+  .toc-dots { flex:1; border-bottom:1px dashed #cbd5e1; margin:0 8px; }
+
+  /* SECTION */
+  .section { background:#fff; border-radius:16px; padding:36px 40px; margin:24px 0; box-shadow:0 1px 8px rgba(0,0,0,.06); }
+  .section-header { display:flex; align-items:center; gap:14px; margin-bottom:24px; padding-bottom:16px; border-bottom:2px solid #f1f5f9; }
+  .section-num { background:#ea580c; color:#fff; width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; flex-shrink:0; }
+  .section-title { font-size:22px; font-weight:800; color:#1e293b; }
+  .section-desc { font-size:14px; color:#64748b; margin-top:2px; }
+  p { font-size:14px; color:#475569; line-height:1.7; margin-bottom:12px; }
+  h4 { font-size:14px; font-weight:700; color:#1e293b; margin:16px 0 8px; }
+  ul, ol { padding-left:20px; font-size:14px; color:#475569; line-height:1.8; margin-bottom:12px; }
+
+  /* MOCKUP GERAL */
+  .mockup { background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; margin:20px 0; }
+  .mockup-bar { background:#1e293b; padding:8px 14px; display:flex; align-items:center; gap:6px; }
+  .mockup-dot { width:10px; height:10px; border-radius:50%; }
+  .mockup-url { background:rgba(255,255,255,.1); border-radius:6px; padding:3px 12px; font-size:11px; color:#94a3b8; flex:1; text-align:center; }
+  .mockup-body { padding:0; }
+
+  /* HEADER MOCKUP */
+  .m-header { background:#fff; padding:10px 16px; display:flex; align-items:center; gap:10px; border-bottom:1px solid #f1f5f9; }
+  .m-logo { font-weight:900; color:#ea580c; font-size:16px; }
+  .m-search { flex:1; background:#f1f5f9; border-radius:999px; padding:6px 14px; font-size:12px; color:#94a3b8; }
+  .m-btn { background:#ea580c; color:#fff; font-size:11px; font-weight:700; padding:5px 12px; border-radius:999px; white-space:nowrap; }
+  .m-btn-outline { border:1px solid #e2e8f0; color:#64748b; font-size:11px; font-weight:600; padding:5px 12px; border-radius:999px; }
+
+  /* LOCATION BAR */
+  .m-locbar { background:#fff; border-bottom:1px solid #f1f5f9; padding:5px 16px; font-size:11px; color:#64748b; display:flex; align-items:center; gap:6px; }
+  .m-locbar-pin { color:#ea580c; }
+  .m-locbar-val { font-weight:700; color:#1e293b; }
+
+  /* HERO */
+  .m-hero { background:linear-gradient(135deg,#ea580c,#f97316); padding:24px 16px; color:#fff; }
+  .m-hero h2 { font-size:18px; font-weight:900; }
+  .m-hero p { font-size:11px; color:rgba(255,255,255,.8); margin:4px 0 12px; }
+  .m-hero-search { background:#fff; border-radius:999px; padding:8px 16px; display:flex; align-items:center; gap:8px; }
+  .m-hero-search input { font-size:11px; color:#94a3b8; flex:1; border:none; outline:none; background:transparent; }
+  .m-hero-search button { background:#ea580c; color:#fff; font-size:11px; padding:4px 12px; border-radius:999px; border:none; font-weight:700; }
+
+  /* CATEGORIES */
+  .m-cats { display:grid; grid-template-columns:repeat(8,1fr); gap:6px; padding:12px 16px; }
+  .m-cat { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:8px 4px; text-align:center; }
+  .m-cat-icon { font-size:16px; }
+  .m-cat-name { font-size:9px; color:#64748b; margin-top:3px; }
+
+  /* PRODUCTS GRID */
+  .m-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:12px 16px; }
+  .m-product { background:#fff; border:1px solid #f1f5f9; border-radius:10px; overflow:hidden; }
+  .m-product-img { height:70px; background:linear-gradient(135deg,#f1f5f9,#e2e8f0); display:flex; align-items:center; justify-content:center; font-size:22px; position:relative; }
+  .m-product-badge { position:absolute; top:4px; left:4px; background:#ea580c; color:#fff; font-size:8px; font-weight:700; padding:2px 5px; border-radius:999px; }
+  .m-product-badge-green { background:#16a34a; }
+  .m-product-badge-blue { background:#2563eb; }
+  .m-product-body { padding:6px 7px; }
+  .m-product-cat { font-size:8px; color:#ea580c; font-weight:600; }
+  .m-product-name { font-size:9px; color:#1e293b; font-weight:600; }
+  .m-product-price { font-size:10px; font-weight:900; color:#1e293b; margin-top:3px; }
+
+  /* STEPS */
+  .steps { display:flex; flex-direction:column; gap:12px; margin:16px 0; }
+  .step { display:flex; gap:14px; align-items:flex-start; }
+  .step-num { width:28px; height:28px; background:#ea580c; color:#fff; border-radius:999px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; flex-shrink:0; }
+  .step-text { font-size:13px; color:#475569; line-height:1.6; padding-top:4px; }
+  .step-text strong { color:#1e293b; }
+
+  /* FORM MOCKUP */
+  .m-form { padding:16px; background:#f8fafc; border-radius:10px; margin:12px 0; }
+  .m-field { margin-bottom:10px; }
+  .m-label { font-size:10px; font-weight:600; color:#374151; margin-bottom:3px; }
+  .m-input { background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:7px 10px; font-size:11px; color:#94a3b8; width:100%; }
+  .m-input-active { border-color:#ea580c; }
+  .m-submit { background:#ea580c; color:#fff; font-size:12px; font-weight:700; padding:10px; border-radius:10px; text-align:center; margin-top:6px; }
+
+  /* FILTERS MOCKUP */
+  .m-layout { display:flex; gap:10px; padding:12px 16px; }
+  .m-sidebar { width:130px; flex-shrink:0; background:#fff; border:1px solid #f1f5f9; border-radius:10px; padding:10px; }
+  .m-sidebar h5 { font-size:9px; font-weight:700; color:#94a3b8; text-transform:uppercase; margin-bottom:6px; }
+  .m-filter-item { font-size:10px; color:#64748b; padding:3px 6px; border-radius:6px; margin-bottom:2px; cursor:pointer; }
+  .m-filter-item.active { background:#fff7ed; color:#ea580c; font-weight:600; }
+  .m-main { flex:1; }
+
+  /* PRODUCT DETAIL */
+  .m-detail { display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:12px 16px; }
+  .m-detail-img { background:linear-gradient(135deg,#f1f5f9,#e2e8f0); border-radius:10px; height:160px; display:flex; align-items:center; justify-content:center; font-size:48px; }
+  .m-detail-info { padding:4px 0; }
+  .m-detail-cat { font-size:10px; color:#ea580c; font-weight:600; }
+  .m-detail-title { font-size:14px; font-weight:800; color:#1e293b; margin:4px 0; }
+  .m-detail-price { font-size:20px; font-weight:900; color:#1e293b; }
+  .m-btn-wa { background:#16a34a; color:#fff; font-size:11px; font-weight:700; padding:8px; border-radius:10px; text-align:center; margin-top:8px; }
+  .m-btn-call { background:#fff; border:2px solid #e2e8f0; color:#374151; font-size:11px; font-weight:700; padding:7px; border-radius:10px; text-align:center; margin-top:6px; }
+  .m-note { background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:7px 10px; font-size:10px; color:#1d4ed8; margin-top:6px; }
+
+  /* SELLER DASHBOARD */
+  .m-dash-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; padding:10px 16px; }
+  .m-stat { background:#fff; border:1px solid #f1f5f9; border-radius:10px; padding:10px; text-align:center; }
+  .m-stat-val { font-size:18px; font-weight:900; color:#1e293b; }
+  .m-stat-label { font-size:9px; color:#94a3b8; margin-top:2px; }
+
+  /* PAYMENT */
+  .m-payment { padding:12px 16px; }
+  .m-plan { border:2px solid #e2e8f0; border-radius:12px; padding:14px; margin-bottom:10px; }
+  .m-plan.premium { border-color:#ea580c; }
+  .m-plan-name { font-size:13px; font-weight:800; color:#1e293b; }
+  .m-plan-price { font-size:20px; font-weight:900; color:#1e293b; }
+  .m-plan-price span { font-size:11px; font-weight:400; color:#94a3b8; }
+  .m-plan-features { margin-top:8px; }
+  .m-plan-feature { font-size:10px; color:#64748b; padding:2px 0; display:flex; align-items:center; gap:5px; }
+  .m-plan-feature::before { content:'✓'; color:#16a34a; font-weight:700; }
+  .m-mx { background:#fff7ed; border:1px solid #fed7aa; border-radius:10px; padding:12px; }
+  .m-mx-title { font-size:12px; font-weight:700; color:#9a3412; margin-bottom:8px; }
+  .m-mx-step { font-size:10px; color:#92400e; padding:2px 0; display:flex; align-items:flex-start; gap:6px; }
+  .m-mx-step::before { content:attr(data-n); background:#ea580c; color:#fff; border-radius:4px; width:16px; height:16px; font-size:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+  /* ADMIN */
+  .m-admin-tabs { display:flex; gap:4px; padding:10px 16px 0; border-bottom:1px solid #f1f5f9; }
+  .m-tab { font-size:11px; font-weight:600; padding:6px 14px; border-bottom:2px solid transparent; color:#64748b; }
+  .m-tab.active { color:#ea580c; border-bottom-color:#ea580c; }
+  .m-table { width:100%; padding:10px 16px; }
+  .m-table table { width:100%; border-collapse:collapse; }
+  .m-table th { font-size:9px; text-transform:uppercase; color:#94a3b8; font-weight:600; padding:6px 8px; border-bottom:1px solid #f1f5f9; text-align:left; }
+  .m-table td { font-size:10px; color:#374151; padding:6px 8px; border-bottom:1px solid #f8fafc; }
+  .m-badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:9px; font-weight:700; }
+  .m-badge-green { background:#dcfce7; color:#15803d; }
+  .m-badge-yellow { background:#fef9c3; color:#a16207; }
+  .m-badge-orange { background:#fff7ed; color:#c2410c; }
+  .m-badge-blue { background:#dbeafe; color:#1d4ed8; }
+
+  /* RECOMMENDATIONS */
+  .m-reco { padding:12px 16px; }
+  .m-reco-title { font-size:12px; font-weight:800; color:#1e293b; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+  .m-reco-badge { background:#fff7ed; color:#ea580c; font-size:9px; font-weight:700; padding:2px 8px; border-radius:999px; }
+  .m-reco-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+
+  /* INFO BOX */
+  .info-box { background:#f0fdf4; border-left:4px solid #16a34a; border-radius:8px; padding:12px 16px; margin:16px 0; }
+  .info-box.warning { background:#fffbeb; border-color:#f59e0b; }
+  .info-box.tip { background:#eff6ff; border-color:#3b82f6; }
+  .info-box p { margin:0; font-size:13px; color:#166534; }
+  .info-box.warning p { color:#92400e; }
+  .info-box.tip p { color:#1e40af; }
+
+  /* TWO COL */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin:16px 0; }
+  .col-box { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; }
+  .col-box h4 { color:#ea580c; margin-top:0; }
+
+  /* FOOTER */
+  .doc-footer { text-align:center; padding:40px; color:#94a3b8; font-size:12px; }
+</style>
+</head>
+<body>
+
+<!-- ============ CAPA ============ -->
+<div class="cover">
+  <div class="cover-logo">🛍️</div>
+  <div class="cover-title">ZU<span>NGA</span></div>
+  <div class="cover-sub">Documentação Completa da Plataforma</div>
+  <div class="cover-badge">Guia do Utilizador · Versão 1.0</div>
+  <div class="cover-meta">
+    Angola · Marketplace Digital<br/>
+    marketplace.zunga.ao
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ============ ÍNDICE ============ -->
+<div class="toc page-break">
+  <h2>📋 Índice</h2>
+  <div class="toc-item"><div class="toc-num">1</div><div class="toc-label">O que é a ZUNGA?</div></div>
+  <div class="toc-item"><div class="toc-num">2</div><div class="toc-label">Registo e Login</div></div>
+  <div class="toc-item"><div class="toc-num">3</div><div class="toc-label">Homepage e Navegação</div></div>
+  <div class="toc-item"><div class="toc-num">4</div><div class="toc-label">Categorias e Subcategorias</div></div>
+  <div class="toc-item"><div class="toc-num">5</div><div class="toc-label">Pesquisa e Filtros Inteligentes</div></div>
+  <div class="toc-item"><div class="toc-num">6</div><div class="toc-label">Página de Produto</div></div>
+  <div class="toc-item"><div class="toc-num">7</div><div class="toc-label">Sistema de Recomendações</div></div>
+  <div class="toc-item"><div class="toc-num">8</div><div class="toc-label">Localização e Proximidade</div></div>
+  <div class="toc-item"><div class="toc-num">9</div><div class="toc-label">Dashboard do Vendedor</div></div>
+  <div class="toc-item"><div class="toc-num">10</div><div class="toc-label">Publicar um Produto</div></div>
+  <div class="toc-item"><div class="toc-num">11</div><div class="toc-label">Planos e Assinatura Premium</div></div>
+  <div class="toc-item"><div class="toc-num">12</div><div class="toc-label">Painel de Administração</div></div>
+  <div class="toc-item"><div class="toc-num">13</div><div class="toc-label">Contacto e Suporte</div></div>
+</div>
+
+<!-- ============ 1. O QUE É ============ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div><div class="section-title">O que é a ZUNGA?</div><div class="section-desc">Visão geral da plataforma</div></div>
+  </div>
+  <p>A <strong>ZUNGA</strong> é um marketplace digital angolano — uma plataforma onde vendedores publicam os seus produtos e compradores os descobrem, comparam e contactam directamente. Funciona de forma semelhante ao OLX ou Facebook Marketplace, mas com foco no mercado angolano.</p>
+  <div class="two-col">
+    <div class="col-box">
+      <h4>🛒 Para Compradores</h4>
+      <ul>
+        <li>Navegar por categorias</li>
+        <li>Pesquisar produtos</li>
+        <li>Ver produtos próximos</li>
+        <li>Contactar vendedores via WhatsApp ou chamada</li>
+        <li>Receber sugestões automáticas</li>
+      </ul>
+    </div>
+    <div class="col-box">
+      <h4>💼 Para Vendedores</h4>
+      <ul>
+        <li>Criar perfil de vendedor</li>
+        <li>Publicar até 3 produtos (gratuito)</li>
+        <li>Premium: produtos ilimitados</li>
+        <li>Estatísticas de visualizações</li>
+        <li>Destaque na pesquisa</li>
+      </ul>
+    </div>
+  </div>
+  <div class="info-box">
+    <p>✅ A ZUNGA não processa pagamentos entre comprador e vendedor. O pagamento é feito presencialmente na entrega, garantindo segurança para ambas as partes.</p>
+  </div>
+</div>
+
+<!-- ============ 2. REGISTO ============ -->
+<div class="section page-break">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div><div class="section-title">Registo e Login</div><div class="section-desc">Como criar conta e entrar na plataforma</div></div>
+  </div>
+  <div class="two-col">
+    <div>
+      <h4>Criar Conta</h4>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-text">Acede a <strong>zunga.ao/registo</strong></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text">Preenche o nome, email e password</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text">Escolhe o tipo de conta: <strong>Comprador</strong> ou <strong>Vendedor</strong></div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-text">Vendedores aguardam aprovação do admin</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="mockup">
+        <div class="mockup-bar"><div class="mockup-dot" style="background:#ef4444"></div><div class="mockup-dot" style="background:#f59e0b"></div><div class="mockup-dot" style="background:#22c55e"></div><div class="mockup-url">zunga.ao/registo</div></div>
+        <div class="mockup-body" style="padding:16px;">
+          <div style="text-align:center;margin-bottom:14px;"><div style="font-size:24px">🛍️</div><div style="font-size:16px;font-weight:900;color:#ea580c;">ZUNGA</div><div style="font-size:11px;color:#64748b;">Cria a tua conta gratuita</div></div>
+          <div class="m-form" style="margin:0;">
+            <div class="m-field"><div class="m-label">Nome completo</div><div class="m-input">João da Silva</div></div>
+            <div class="m-field"><div class="m-label">Email</div><div class="m-input m-input-active">joao@email.com</div></div>
+            <div class="m-field"><div class="m-label">Password</div><div class="m-input">••••••••</div></div>
+            <div class="m-field"><div class="m-label">Tipo de Conta</div>
+              <div style="display:flex;gap:6px;margin-top:4px;">
+                <div style="flex:1;border:2px solid #ea580c;border-radius:8px;padding:6px;text-align:center;font-size:10px;color:#ea580c;font-weight:700;">Comprador</div>
+                <div style="flex:1;border:1px solid #e2e8f0;border-radius:8px;padding:6px;text-align:center;font-size:10px;color:#64748b;">Vendedor</div>
+              </div>
+            </div>
+            <div class="m-submit">Criar Conta</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="info-box warning">
+    <p>⚠️ Contas de vendedor ficam com estado "Pendente" até o administrador aprovar. Receberás confirmação via WhatsApp.</p>
+  </div>
+</div>
+
+<!-- ============ 3. HOMEPAGE ============ -->
+<div class="section page-break">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div><div class="section-title">Homepage e Navegação</div><div class="section-desc">A página principal da plataforma</div></div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-bar"><div class="mockup-dot" style="background:#ef4444"></div><div class="mockup-dot" style="background:#f59e0b"></div><div class="mockup-dot" style="background:#22c55e"></div><div class="mockup-url">zunga.ao</div></div>
+    <div class="mockup-body">
+      <div class="m-header">
+        <div class="m-logo">ZUNGA</div>
+        <div class="m-search">🔍 &nbsp;Pesquisar produtos...</div>
+        <div class="m-btn-outline">Entrar</div>
+        <div class="m-btn">Registar</div>
+      </div>
+      <div class="m-locbar"><span class="m-locbar-pin">📍</span> A mostrar produtos perto de: <span class="m-locbar-val">Luanda ▾</span> <span style="margin-left:auto;font-size:10px;color:#94a3b8;">Ordenado por proximidade</span></div>
+      <div class="m-hero"><h2>Compra e Vende em Angola 🇦🇴</h2><p>O melhor marketplace digital angolano</p><div class="m-hero-search"><input placeholder="Pesquisar produtos, categorias..."/><button>Pesquisar</button></div></div>
+      <div style="padding:10px 16px 4px;font-size:11px;font-weight:700;color:#1e293b;">Categorias</div>
+      <div class="m-cats">
+        <div class="m-cat"><div class="m-cat-icon">👔👗</div><div class="m-cat-name">Moda</div></div>
+        <div class="m-cat"><div class="m-cat-icon">📱</div><div class="m-cat-name">Tecnologia</div></div>
+        <div class="m-cat"><div class="m-cat-icon">💄</div><div class="m-cat-name">Beleza</div></div>
+        <div class="m-cat"><div class="m-cat-icon">🏠</div><div class="m-cat-name">Casa</div></div>
+        <div class="m-cat"><div class="m-cat-icon">🍽️</div><div class="m-cat-name">Restaurantes</div></div>
+        <div class="m-cat"><div class="m-cat-icon">🚗</div><div class="m-cat-name">Auto</div></div>
+        <div class="m-cat"><div class="m-cat-icon">⚽</div><div class="m-cat-name">Esporte</div></div>
+        <div class="m-cat"><div class="m-cat-icon">🍼</div><div class="m-cat-name">Bebés</div></div>
+      </div>
+      <div style="padding:10px 16px 4px;font-size:11px;font-weight:700;color:#1e293b;">📍 Perto de Si · Luanda</div>
+      <div class="m-grid">
+        <div class="m-product"><div class="m-product-img">👟<div class="m-product-badge m-product-badge-green">Próximo</div><div class="m-product-badge m-product-badge-blue" style="top:auto;bottom:18px;">🚚 Entrega</div><div style="position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,.5);color:#fff;font-size:7px;padding:1px 5px;border-radius:999px;">~3km</div></div><div class="m-product-body"><div class="m-product-cat">Masculino</div><div class="m-product-name">Tênis Nike Air Max</div><div class="m-product-price">18.500 Kz</div></div></div>
+        <div class="m-product"><div class="m-product-img">👗<div class="m-product-badge">⭐ Destaque</div></div><div class="m-product-body"><div class="m-product-cat">Feminino</div><div class="m-product-name">Vestido Floral</div><div class="m-product-price">12.000 Kz</div></div></div>
+        <div class="m-product"><div class="m-product-img">📱</div><div class="m-product-body"><div class="m-product-cat">Tecnologia</div><div class="m-product-name">Samsung Galaxy A54</div><div class="m-product-price">95.000 Kz</div></div></div>
+        <div class="m-product"><div class="m-product-img">⌚<div class="m-product-badge" style="background:#ef4444;">Oferta</div></div><div class="m-product-body"><div class="m-product-cat">Acessórios</div><div class="m-product-name">Relógio Casio</div><div class="m-product-price">8.500 Kz</div></div></div>
+      </div>
+    </div>
+  </div>
+  <h4>Secções da Homepage</h4>
+  <ul>
+    <li><strong>Barra de Localização</strong> — mostra a província actual e ordena os produtos por proximidade</li>
+    <li><strong>Hero / Pesquisa</strong> — barra de pesquisa principal com acesso rápido</li>
+    <li><strong>Categorias</strong> — 8 categorias principais com ícones visuais</li>
+    <li><strong>Perto de Si</strong> — produtos da tua província em destaque</li>
+    <li><strong>Em Destaque</strong> — produtos promovidos pelos vendedores Premium</li>
+    <li><strong>Ofertas do Dia</strong> — produtos com preço reduzido</li>
+    <li><strong>Publicações Recentes</strong> — os produtos mais novos da plataforma</li>
+  </ul>
+</div>
+
+<!-- ============ 4. CATEGORIAS ============ -->
+<div class="section page-break">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div><div class="section-title">Categorias e Subcategorias</div><div class="section-desc">Organização dos produtos em 3 níveis</div></div>
+  </div>
+  <p>A ZUNGA organiza os produtos em <strong>3 níveis hierárquicos</strong>. Cada nível tem pills de filtro para navegar facilmente.</p>
+  <div class="mockup">
+    <div class="mockup-bar"><div class="mockup-dot" style="background:#ef4444"></div><div class="mockup-dot" style="background:#f59e0b"></div><div class="mockup-dot" style="background:#22c55e"></div><div class="mockup-url">zunga.ao/categoria/moda</div></div>
+    <div class="mockup-body">
+      <div class="m-header"><div class="m-logo">ZUNGA</div><div class="m-search">🔍 &nbsp;Pesquisar...</div></div>
+      <div style="padding:10px 16px 6px;font-size:10px;color:#94a3b8;">Moda & Estilo</div>
+      <div style="text-align:center;padding:8px;"><div style="font-size:32px;">👔</div><div style="font-size:16px;font-weight:900;color:#1e293b;">Moda & Estilo</div><div style="font-size:11px;color:#64748b;">24 produtos disponíveis</div></div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:8px 16px;">
+        <div style="padding:5px 12px;background:#ea580c;color:#fff;border-radius:999px;font-size:10px;font-weight:700;">Todos</div>
+        <div style="padding:5px 12px;border:1px solid #e2e8f0;color:#64748b;border-radius:999px;font-size:10px;">Masculino</div>
+        <div style="padding:5px 12px;border:1px solid #e2e8f0;color:#64748b;border-radius:999px;font-size:10px;">Feminino</div>
+      </div>
+      <div class="m-grid" style="padding:8px 16px;">
+        <div class="m-product"><div class="m-product-img">👔</div><div class="m-product-body"><div class="m-product-name">Camisa Social</div><div class="m-product-price">7.500 Kz</div></div></div>
+        <div class="m-product"><div class="m-product-img">👗</div><div class="m-product-body"><div class="m-product-name">Vestido Elegante</div><div class="m-product-price">15.000 Kz</div></div></div>
+        <div class="m-product"><div class="m-product-img">👟</div><div class="m-product-body"><div class="m-product-name">Tênis Desportivo</div><div class="m-product-price">22.000 Kz</div></div></div>
+        <div class="m-product"><div class="m-product-img">⌚</div><div class="m-product-body"><div class="m-product-name">Relógio Clássico</div><div class="m-product-price">35.000 Kz</div></div></div>
+      </div>
+    </div>
+  </div>
+  <h4>Categorias disponíveis</h4>
+  <div class="two-col">
+    <ul>
+      <li>👔👗 <strong>Moda & Estilo</strong> — Masculino, Feminino</li>
+      <li>📱 <strong>Tecnologia</strong> — Telemóveis, Computadores…</li>
+      <li>💄 <strong>Beleza & Cuidados</strong> — Maquiagem, Cabelo…</li>
+      <li>🏠 <strong>Casa & Vida</strong> — Móveis, Decoração…</li>
+    </ul>
+    <ul>
+      <li>🍽️ <strong>Restaurantes</strong> — Pratos, Entregas</li>
+      <li>🚗 <strong>Auto & Mobilidade</strong> — Veículos, Peças…</li>
+      <li>⚽ <strong>Esporte & Lazer</strong> — Roupas, Equipamentos…</li>
+      <li>🍼 <strong>Bebés & Crianças</strong> — Roupas, Brinquedos…</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ 5. PESQUISA ============ -->
+<div class="section page-break">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div><div class="section-title">Pesquisa e Filtros Inteligentes</div><div class="section-desc">Encontra o que procuras rapidamente</div></div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-bar"><div class="mockup-dot" style="background:#ef4444"></div><div class="mockup-dot" style="background:#f59e0b"></div><div class="mockup-dot" style="background:#22c55e"></div><div class="mockup-url">zunga.ao/produtos?q=tenis</div></div>
+    <div class="mockup-body">
+      <div class="m-header"><div class="m-logo">ZUNGA</div><div class="m-search" style="background:#fff7ed;border:1px solid #fed7aa;color:#1e293b;">🔍 &nbsp;tenis</div></div>
+      <div class="m-layout">
+        <div class="m-sidebar">
+          <h5>🔧 Filtros</h5>
+          <div style="margin-bottom:8px;">
+            <div style="font-size:8px;font-weight:700;color:#94a3b8;text-transform:uppercase;margin-bottom:4px;">Entrega</div>
+            <div class="m-filter-item active">🚚 Com Entrega</div>
+          </div>
+          <div style="margin-bottom:8px;">
+            <div style="font-size:8px;font-weight:700;color:#94a3b8;text-transform:uppercase;margin-bottom:4px;">Preço (Kz)</div>
+            <div style="display:flex;gap:3px;"><div style="background:#fff;border:1px solid #e2e8f0;border-radius:6px;padding:3px 5px;font-size:9px;color:#94a3b8;flex:1;">Min</div><span style="font-size:9px;color:#94a3b8;">—</span><div style="background:#fff;border:1px solid #e2e8f0;border-radius:6px;padding:3px 5px;font-size:9px;color:#94a3b8;flex:1;">Max</div></div>
+          </div>
+          <div style="margin-bottom:8px;">
+            <div style="font-size:8px;font-weight:700;color:#94a3b8;text-transform:uppercase;margin-bottom:4px;">Categoria</div>
+            <div class="m-filter-item active">Todas</div>
+            <div class="m-filter-item">👔👗 Moda</div>
+            <div class="m-filter-item">⚽ Esporte</div>
+          </div>
+          <div>
+            <div style="font-size:8px;font-weight:700;color:#94a3b8;text-transform:uppercase;margin-bottom:4px;">Província</div>
+            <div class="m-filter-item active">Todas</div>
+            <div class="m-filter-item">Luanda</div>
+            <div class="m-filter-item">Benguela</div>
+          </div>
+        </div>
+        <div class="m-main">
+          <div style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap;">
+            <div style="padding:4px 10px;border:1px solid #ea580c;background:#fff7ed;color:#ea580c;border-radius:999px;font-size:9px;font-weight:600;">Mais Recente</div>
+            <div style="padding:4px 10px;border:1px solid #e2e8f0;color:#64748b;border-radius:999px;font-size:9px;">Preço ↑</div>
+            <div style="padding:4px 10px;border:1px solid #e2e8f0;color:#64748b;border-radius:999px;font-size:9px;">Preço ↓</div>
+            <div style="padding:4px 10px;border:1px solid #e2e8f0;color:#64748b;border-radius:999px;font-size:9px;">Mais Popular</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+            <div class="m-product"><div class="m-product-img" style="height:60px;">👟<div class="m-product-badge m-product-badge-blue">🚚</div><div style="position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,.5);color:#fff;font-size:7px;padding:1px 4px;border-radius:999px;">~5km</div></div><div class="m-product-body"><div class="m-product-name">Tênis Nike</div><div class="m-product-price">18.500 Kz</div></div></div>
+            <div class="m-product"><div class="m-product-img" style="height:60px;">👟</div><div class="m-product-body"><div class="m-product-name">Tênis Adidas</div><div class="m-product-price">22.000 Kz</div></div></div>
+            <div class="m-product"><div class="m-product-img" style="height:60px;">👟<div class="m-product-badge m-product-badge-green">Próximo</div></div><div class="m-product-body"><div class="m-product-name">Tênis Puma</div><div class="m-product-price">15.000 Kz</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <h4>Filtros disponíveis</h4>
+  <ul>
+    <li><strong>Pesquisa por texto</strong> — funciona mesmo com palavras incompletas</li>
+    <li><strong>Com Entrega</strong> — mostra apenas produtos com entrega ao domicílio</li>
+    <li><strong>Preço mínimo/máximo</strong> — define o intervalo de preço pretendido</li>
+    <li><strong>Categoria</strong> — filtra por categoria específica</li>
+    <li><strong>Província</strong> — mostra apenas produtos de uma província</li>
+    <li><strong>Ordenação</strong> — Mais Recente, Preço ↑, Preço ↓, Mais Popular</li>
+  </ul>
+</div>
+
+<!-- ============ 6. PRODUTO ============ -->
+<div class="section page-break">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div><div class="section-title">Página de Produto</div><div class="section-desc">Como ver e contactar o vendedor</div></div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-bar"><div class="mockup-dot" style="background:#ef4444"></div><div class="mockup-dot" style="background:#f59e0b"></div><div class="mockup-dot" style="background:#22c55e"></div><div class="mockup-url">zunga.ao/produto/abc123</div></div>
+    <div class="mockup-body">
+      <div class="m-header"><div class="m-logo">ZUNGA</div><div class="m-search">🔍 &nbsp;Pesquisar...</div></div>
+      <div class="m-detail">
+        <div>
+          <div class="m-detail-img">👟</div>
+          <div style="display:flex;gap:4px;margin-top:6px;">
+            <div style="width:36px;height:36px;background:#f1f5f9;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;">👟</div>
+            <div style="width:36px;height:36px;background:#f1f5f9;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;">👟</div>
+          </div>
+        </div>
+        <div class="m-detail-info">
+          <div class="m-detail-cat">👟 Masculino · Tênis</div>
+          <div class="m-detail-title">Tênis Nike Air Max 270 n.42</div>
+          <div class="m-detail-price">18.500 Kz <span style="font-size:11px;color:#94a3b8;text-decoration:line-through;">22.000 Kz</span></div>
+          <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;">
+            <span style="background:#111;width:14px;height:14px;border-radius:50%;display:inline-block;border:1px solid #e2e8f0;"></span>
+            <span style="background:#fff;width:14px;height:14px;border-radius:50%;display:inline-block;border:1px solid #e2e8f0;"></span>
+            <span style="font-size:8px;color:#64748b;padding-top:2px;">Cores disponíveis</span>
+          </div>
+          <div style="font-size:10px;color:#475569;background:#f8fafc;border-radius:8px;padding:7px;margin-top:6px;">Produto em excelente estado, usado apenas 2 vezes. Caixa original incluída.</div>
+          <div class="m-btn-wa">💬 Contactar via WhatsApp</div>
+          <div class="m-btn-call">📞 Chamada Directa</div>
+          <div class="m-note">🚚 A taxa de entrega é definida por cada vendedor, variando de acordo com a distância.</div>
+          <div style="background:#f8fafc;border-radius:8px;padding:6px;margin-top:6px;font-size:10px;color:#64748b;">💡 O pagamento é feito presencialmente na entrega</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <h4>Informações da página de produto</h4>
+  <ul>
+    <li><strong>Fotos</strong> — até 5 imagens com galeria navegável</li>
+    <li><strong>Preço e oferta</strong> — preço original e preço de oferta com riscado</li>
+    <li><strong>Cores e tamanhos</strong> — swatches visuais das variações disponíveis</li>
+    <li><strong>Botão WhatsApp</strong> — abre conversa com mensagem pré-preenchida</li>
+    <li><strong>Chamada Directa</strong> — alternativa ao WhatsApp se não estiver disponível</li>
+    <li><strong>Nota de entrega</strong> — aviso claro sobre taxa definida pelo vendedor</li>
+  </ul>
+</div>
+
+<!-- ============ 7. RECOMENDAÇÕES ============ -->
+<div class="section page-break">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div><div class="section-title">Sistema de Recomendações</div><div class="section-desc">A plataforma sugere produtos automaticamente</div></div>
+  </div>
+  <p>Ao visualizar um produto, o sistema analisa automaticamente as características e sugere os produtos mais semelhantes.</p>
+  <div class="mockup">
+    <div class="mockup-bar"><div class="mockup-dot" style="background:#ef4444"></div><div class="mockup-dot" style="background:#f59e0b"></div><div class="mockup-dot" style="background:#22c55e"></div><div class="mockup-url">zunga.ao/produto/abc123</div></div>
+    <div class="m-reco">
+      <div class="m-reco-title">Produtos Semelhantes <span class="m-reco-badge">Sugeridos para si</span></div>
+      <div class="m-reco-grid">
+        <div class="m-product"><div class="m-product-img" style="height:65px;">👟<div style="position:absolute;bottom:4px;left:4px;display:flex;gap:2px;"><span style="width:8px;height:8px;border-radius:50%;background:#111;border:1px solid #fff;"></span><span style="width:8px;height:8px;border-radius:50%;background:#fff;border:1px solid #e2e8f0;"></span></div></div><div class="m-product-body"><div class="m-product-cat">Masculino</div><div class="m-product-name">Tênis Adidas UB</div><div class="m-product-price">22.000 Kz</div></div></div>
+        <div class="m-product"><div class="m-product-img" style="height:65px;">👟</div><div class="m-product-body"><div class="m-product-cat">Masculino</div><div class="m-product-name">Tênis Puma Suede</div><div class="m-product-price">15.500 Kz</div></div></div>
+        <div class="m-product"><div class="m-product-img" style="height:65px;">👟<div class="m-product-badge" style="font-size:7px;padding:1px 4px;">⭐</div></div><div class="m-product-body"><div class="m-product-cat">Masculino</div><div class="m-product-name">Air Force 1 n.42</div><div class="m-product-price">28.000 Kz</div></div></div>
+        <div class="m-product"><div class="m-product-img" style="height:65px;">👟</div><div class="m-product-body"><div class="m-product-cat">Masculino</div><div class="m-product-name">Tênis New Balance</div><div class="m-product-price">19.000 Kz</div></div></div>
+      </div>
+    </div>
+  </div>
+  <h4>Como funciona o scoring de recomendação</h4>
+  <div class="two-col">
+    <div class="col-box">
+      <h4>Critérios</h4>
+      <ul>
+        <li>Mesma categoria exacta (+4 pts)</li>
+        <li>Cor em comum (+2 pts por cor)</li>
+        <li>Tamanho em comum (+1 pt)</li>
+        <li>Palavra-chave no título (+2 pts)</li>
+        <li>Produto em destaque (+1 pt)</li>
+        <li>Likes populares (+1 pt)</li>
+      </ul>
+    </div>
+    <div class="col-box">
+      <h4>Resultado</h4>
+      <ul>
+        <li>Mostra até <strong>8 produtos</strong> semelhantes</li>
+        <li>Swatches de cores em comum visíveis</li>
+        <li>Ordenados do mais relevante</li>
+        <li>Inclui categorias irmãs</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 8. LOCALIZAÇÃO ============ -->
+<div class="section page-break">
+  <div class="section-header">
+    <div class="section-num">8</div>
+    <div><div class="section-title">Localização e Proximidade</div><div class="section-desc">Produtos mais próximos aparecem primeiro</div></div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-bar"><div class="mockup-dot" style="background:#ef4444"></div><div class="mockup-dot" style="background:#f59e0b"></div><div class="mockup-dot" style="background:#22c55e"></div><div class="mockup-url">zunga.ao</div></div>
+    <div class="mockup-body">
+      <div class="m-locbar"><span style="color:#ea580c;">📍</span> A mostrar produtos perto de: <span style="font-weight:700;color:#1e293b;">Luanda ▾</span>
+        <div style="position:absolute;right:20px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.1);padding:8px;min-width:160px;font-size:10px;">
+          <div style="color:#ea580c;font-weight:600;padding:4px 8px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:4px;">📡 Detectar automaticamente</div>
+          <div style="padding:4px 8px;background:#fff7ed;color:#ea580c;font-weight:600;">✓ Luanda</div>
+          <div style="padding:4px 8px;color:#374151;">Benguela</div>
+          <div style="padding:4px 8px;color:#374151;">Huambo</div>
+          <div style="padding:4px 8px;color:#374151;">Bié</div>
+        </div>
+      </div>
+      <div style="padding:8px 16px 4px;font-size:11px;font-weight:700;color:#1e293b;display:flex;align-items:center;gap:6px;"><span style="color:#16a34a;">📍</span> Perto de Si · <span style="color:#16a34a;">Luanda</span></div>
+      <div class="m-grid">
+        <div class="m-product"><div class="m-product-img">👗<div class="m-product-badge m-product-badge-green">📍 Próximo</div><div style="position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,.5);color:#fff;font-size:7px;padding:1px 5px;border-radius:999px;">~2km</div></div><div class="m-product-body"><div class="m-product-name">Vestido Elegante</div><div class="m-product-price">12.000 Kz</div></div></div>
+        <div class="m-product"><div class="m-product-img">📱<div class="m-product-badge m-product-badge-green">📍 Próximo</div><div style="position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,.5);color:#fff;font-size:7px;padding:1px 5px;border-radius:999px;">~8km</div></div><div class="m-product-body"><div class="m-product-name">iPhone 13 Pro</div><div class="m-product-price">280.000 Kz</div></div></div>
+        <div class="m-product"><div class="m-product-img">🏠<div style="position:absolute;bottom:4px;left:4px;background:rgba(0,0,0,.5);color:#fff;font-size:7px;padding:1px 5px;border-radius:999px;">~45km</div></div><div class="m-product-body"><div class="m-product-name">Sofá 3 Lugares</div><div class="m-product-price">85.000 Kz</div></div></div>
+        <div class="m-product"><div class="m-product-img">👔</div><div class="m-product-body"><div class="m-product-name">Fato Formal</div><div class="m-product-price">55.000 Kz</div></div></div>
+      </div>
+    </div>
+  </div>
+  <h4>Como funciona a localização</h4>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-text">A plataforma pede permissão para aceder à localização do dispositivo via GPS</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text">Caso aceite, detecta automaticamente a <strong>província mais próxima</strong> usando coordenadas GPS</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text">Caso recuse, pode seleccionar manualmente a província na <strong>barra de localização</strong></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text">A escolha fica guardada por <strong>1 ano</strong> no dispositivo</div></div>
+  </div>
+  <div class="info-box tip">
+    <p>💡 Produtos da mesma cidade têm prioridade máxima. Produtos da mesma província aparecem antes dos de outras províncias.</p>
+  </div>
+</div>
+
+<!-- ============ 9. DASHBOARD ============ -->
+<div class="section page-break">
+  <div class="section-header">
+    <div class="section-num">9</div>
+    <div><div class="section-title">Dashboard do Vendedor</div><div class="section-desc">Área de gestão para vendedores registados</div></div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-bar"><div class="mockup-dot" style="background:#ef4444"></div><div class="mockup-dot" style="background:#f59e0b"></div><div class="mockup-dot" style="background:#22c55e"></div><div class="mockup-url">zunga.ao/dashboard</div></div>
+    <div class="mockup-body">
+      <div class="m-header"><div class="m-logo">ZUNGA</div><div style="font-size:11px;color:#64748b;">Olá, João 👋</div><div class="m-btn">+ Novo Produto</div></div>
+      <div style="padding:10px 16px 6px;font-size:13px;font-weight:800;color:#1e293b;">Os Meus Produtos</div>
+      <div class="m-dash-stats">
+        <div class="m-stat"><div class="m-stat-val">3</div><div class="m-stat-label">Produtos</div></div>
+        <div class="m-stat"><div class="m-stat-val">128</div><div class="m-stat-label">Visualizações</div></div>
+        <div class="m-stat"><div class="m-stat-val">24</div><div class="m-stat-label">Likes</div></div>
+        <div class="m-stat" style="background:#fff7ed;border-color:#fed7aa;"><div class="m-stat-val" style="color:#ea580c;">Free</div><div class="m-stat-label">Plano</div></div>
+      </div>
+      <div style="padding:0 16px 10px;">
+        <div style="border:1px solid #f1f5f9;border-radius:10px;overflow:hidden;">
+          <div style="display:grid;grid-template-columns:40px 1fr auto auto;gap:8px;align-items:center;padding:8px 12px;background:#f8fafc;font-size:9px;font-weight:700;color:#94a3b8;text-transform:uppercase;">
+            <div></div><div>Produto</div><div>Preço</div><div>Estado</div>
+          </div>
+          <div style="display:grid;grid-template-columns:40px 1fr auto auto;gap:8px;align-items:center;padding:8px 12px;border-top:1px solid #f1f5f9;">
+            <div style="font-size:18px;">👟</div>
+            <div><div style="font-size:10px;font-weight:600;color:#1e293b;">Tênis Nike Air Max</div><div style="font-size:9px;color:#94a3b8;">32 visualizações · 8 likes</div></div>
+            <div style="font-size:10px;font-weight:700;">18.500 Kz</div>
+            <div><span class="m-badge m-badge-green">Activo</span></div>
+          </div>
+          <div style="display:grid;grid-template-columns:40px 1fr auto auto;gap:8px;align-items:center;padding:8px 12px;border-top:1px solid #f1f5f9;">
+            <div style="font-size:18px;">👔</div>
+            <div><div style="font-size:10px;font-weight:600;color:#1e293b;">Camisa Social Azul</div><div style="font-size:9px;color:#94a3b8;">18 visualizações · 3 likes</div></div>
+            <div style="font-size:10px;font-weight:700;">7.500 Kz</div>
+            <div><span class="m-badge m-badge-green">Activo</span></div>
+          </div>
+          <div style="display:grid;grid-template-columns:40px 1fr auto auto;gap:8px;align-items:center;padding:8px 12px;border-top:1px solid #f1f5f9;opacity:0.6;">
+            <div style="font-size:18px;">⌚</div>
+            <div><div style="font-size:10px;font-weight:600;color:#1e293b;">Relógio Casio</div><div style="font-size:9px;color:#94a3b8;">Bloqueado — limite do plano Free</div></div>
+            <div style="font-size:10px;font-weight:700;">12.000 Kz</div>
+            <div><span class="m-badge m-badge-yellow">Limite</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="info-box warning">
+    <p>⚠️ O plano gratuito permite publicar até <strong>3 produtos</strong>. Para publicar mais, subscreve o plano Premium por 5.000 Kz/mês.</p>
+  </div>
+</div>
+
+<!-- ============ 10. PUBLICAR ============ -->
+<div class="section page-break">
+  <div class="section-header">
+    <div class="section-num">10</div>
+    <div><div class="section-title">Publicar um Produto</div><div class="section-desc">Como adicionar um novo produto à plataforma</div></div>
+  </div>
+  <div class="two-col">
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Fotos</strong> — adiciona até 5 fotos do produto. A primeira é a imagem principal.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Informação</strong> — título, descrição detalhada, categoria e condição (Novo/Usado).</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Cores e Tamanhos</strong> — selecciona as variações disponíveis em stock.</div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Preço</strong> — define o preço normal e, opcionalmente, um preço de oferta.</div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-text"><strong>Entrega</strong> — activa se ofereces serviço de entrega ao domicílio.</div></div>
+      <div class="step"><div class="step-num">6</div><div class="step-text"><strong>Localização</strong> — escolhe a província e cidade onde o produto se encontra.</div></div>
+      <div class="step"><div class="step-num">7</div><div class="step-text"><strong>WhatsApp</strong> — número para os compradores te contactarem.</div></div>
+    </div>
+    <div>
+      <div class="mockup">
+        <div class="mockup-bar"><div class="mockup-dot" style="background:#ef4444"></div><div class="mockup-dot" style="background:#f59e0b"></div><div class="mockup-dot" style="background:#22c55e"></div><div class="mockup-url">zunga.ao/dashboard/novo-produto</div></div>
+        <div class="mockup-body" style="padding:12px;">
+          <div style="font-size:13px;font-weight:800;color:#1e293b;margin-bottom:10px;">Publicar Produto</div>
+          <div style="background:#f8fafc;border-radius:8px;padding:8px;margin-bottom:8px;">
+            <div style="font-size:10px;font-weight:700;color:#374151;margin-bottom:4px;">Fotos do produto</div>
+            <div style="display:flex;gap:4px;">
+              <div style="width:36px;height:36px;background:linear-gradient(135deg,#f1f5f9,#e2e8f0);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;">👟</div>
+              <div style="width:36px;height:36px;border:2px dashed #e2e8f0;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#94a3b8;">+</div>
+            </div>
+          </div>
+          <div class="m-form" style="margin:0;">
+            <div class="m-field"><div class="m-label">Título</div><div class="m-input m-input-active">Tênis Nike Air Max 270 — n.42</div></div>
+            <div class="m-field"><div class="m-label">Categoria</div><div class="m-input">Masculino › Tênis</div></div>
+            <div class="m-field"><div class="m-label">Preço (Kz)</div><div class="m-input">18.500</div></div>
+          </div>
+          <div style="border:2px solid #16a34a;background:#f0fdf4;border-radius:8px;padding:8px;display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
+            <div style="font-size:10px;color:#15803d;font-weight:600;">🚚 Oferece serviço de entrega</div>
+            <div style="width:28px;height:16px;background:#16a34a;border-radius:999px;position:relative;"><div style="position:absolute;right:2px;top:2px;width:12px;height:12px;background:#fff;border-radius:50%;"></div></div>
+          </div>
+          <div class="m-submit" style="margin-top:8px;">Publicar Produto</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 11. PREMIUM ============ -->
+<div class="section page-break">
+  <div class="section-header">
+    <div class="section-num">11</div>
+    <div><div class="section-title">Planos e Assinatura Premium</div><div class="section-desc">Como activar o plano Premium</div></div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-bar"><div class="mockup-dot" style="background:#ef4444"></div><div class="mockup-dot" style="background:#f59e0b"></div><div class="mockup-dot" style="background:#22c55e"></div><div class="mockup-url">zunga.ao/dashboard/assinatura</div></div>
+    <div class="m-payment">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div class="m-plan">
+          <div class="m-plan-name">Gratuito</div>
+          <div class="m-plan-price">0 Kz<span>/mês</span></div>
+          <div class="m-plan-features">
+            <div class="m-plan-feature">Até 3 produtos</div>
+            <div class="m-plan-feature">Perfil de vendedor</div>
+            <div class="m-plan-feature">Contacto via WhatsApp</div>
+          </div>
+        </div>
+        <div class="m-plan premium">
+          <div style="display:flex;align-items:center;gap:4px;"><div class="m-plan-name">Premium</div><span style="color:#f59e0b;">⭐</span></div>
+          <div class="m-plan-price">5.000 Kz<span>/mês</span></div>
+          <div class="m-plan-features">
+            <div class="m-plan-feature">Produtos ilimitados</div>
+            <div class="m-plan-feature">Destaque na pesquisa</div>
+            <div class="m-plan-feature">Badge Premium</div>
+            <div class="m-plan-feature">Estatísticas avançadas</div>
+          </div>
+        </div>
+      </div>
+      <div class="m-mx">
+        <div class="m-mx-title">💳 Como pagar via Multicaixa Express</div>
+        <div class="m-mx-step" data-n="1">Abre o teu banco (BAI, BFA, BIC…) ou marca *800#</div>
+        <div class="m-mx-step" data-n="2">Selecciona Pagamento de Serviços</div>
+        <div class="m-mx-step" data-n="3">Entidade: <strong>ZUNGA</strong></div>
+        <div class="m-mx-step" data-n="4">Referência: <strong>os últimos 8 caracteres do teu ID</strong></div>
+        <div class="m-mx-step" data-n="5">Valor: <strong>5.000 Kz</strong> e confirma com PIN</div>
+        <div class="m-mx-step" data-n="6">Envia comprovativo via WhatsApp para activação</div>
+      </div>
+    </div>
+  </div>
+  <div class="info-box">
+    <p>✅ A activação é feita em até 2 horas em dias úteis após envio do comprovativo. Também é possível pagar por Transferência Bancária (BAI).</p>
+  </div>
+</div>
+
+<!-- ============ 12. ADMIN ============ -->
+<div class="section page-break">
+  <div class="section-header">
+    <div class="section-num">12</div>
+    <div><div class="section-title">Painel de Administração</div><div class="section-desc">Ferramentas para o administrador da plataforma</div></div>
+  </div>
+  <p>Acesso exclusivo para administradores em <strong>zunga.ao/admin</strong> com as credenciais de admin.</p>
+  <div class="mockup">
+    <div class="mockup-bar"><div class="mockup-dot" style="background:#ef4444"></div><div class="mockup-dot" style="background:#f59e0b"></div><div class="mockup-dot" style="background:#22c55e"></div><div class="mockup-url">zunga.ao/admin</div></div>
+    <div class="mockup-body">
+      <div class="m-header"><div class="m-logo">ZUNGA</div><div style="font-size:11px;color:#64748b;">Painel Administrativo</div></div>
+      <div class="m-dash-stats" style="grid-template-columns:repeat(6,1fr);">
+        <div class="m-stat"><div class="m-stat-val">48</div><div class="m-stat-label">Utilizadores</div></div>
+        <div class="m-stat"><div class="m-stat-val">12</div><div class="m-stat-label">Vendedores</div></div>
+        <div class="m-stat" style="border-color:#fbbf24;"><div class="m-stat-val" style="color:#d97706;">3</div><div class="m-stat-label">Pendentes</div></div>
+        <div class="m-stat"><div class="m-stat-val">87</div><div class="m-stat-label">Produtos</div></div>
+        <div class="m-stat"><div class="m-stat-val">2.4k</div><div class="m-stat-label">Visualizações</div></div>
+        <div class="m-stat"><div class="m-stat-val">156</div><div class="m-stat-label">Likes</div></div>
+      </div>
+      <div class="m-admin-tabs">
+        <div class="m-tab active">Vendedores</div>
+        <div class="m-tab">Produtos</div>
+        <div class="m-tab">Configurações</div>
+      </div>
+      <div class="m-table">
+        <table>
+          <tr><th>Vendedor</th><th>Email</th><th>Produtos</th><th>Estado</th><th>Plano</th><th>Acção</th></tr>
+          <tr><td>Maria Silva</td><td>maria@…</td><td>5</td><td><span class="m-badge m-badge-green">Activo</span></td><td><span class="m-badge m-badge-orange">Premium</span></td><td style="color:#ea580c;font-size:9px;">Gerir</td></tr>
+          <tr><td>João Costa</td><td>joao@…</td><td>2</td><td><span class="m-badge m-badge-yellow">Pendente</span></td><td><span class="m-badge m-badge-blue">Free</span></td><td style="color:#16a34a;font-size:9px;font-weight:700;">✓ Aprovar</td></tr>
+          <tr><td>Ana Ferreira</td><td>ana@…</td><td>8</td><td><span class="m-badge m-badge-green">Activo</span></td><td><span class="m-badge m-badge-orange">Premium</span></td><td style="color:#ea580c;font-size:9px;">Gerir</td></tr>
+        </table>
+      </div>
+      <div style="padding:0 16px 12px;">
+        <div style="background:#f8fafc;border-radius:10px;padding:10px;">
+          <div style="font-size:11px;font-weight:700;color:#1e293b;margin-bottom:8px;">⚙️ Configurações da Plataforma</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+            <div><div class="m-label">WhatsApp de Suporte</div><div class="m-input">244934023228</div></div>
+            <div><div class="m-label">Preço Premium (Kz/mês)</div><div class="m-input">5000</div></div>
+            <div><div class="m-label">IBAN</div><div class="m-input">AO06 0040 0000…</div></div>
+            <div><div class="m-label">Banco</div><div class="m-input">BAI</div></div>
+          </div>
+          <div style="background:#ea580c;color:#fff;font-size:10px;font-weight:700;padding:7px;border-radius:8px;text-align:center;margin-top:8px;">💾 Guardar Configurações</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <h4>O que o admin pode fazer</h4>
+  <div class="two-col">
+    <ul>
+      <li>Aprovar ou rejeitar vendedores</li>
+      <li>Activar/desactivar contas Premium</li>
+      <li>Remover produtos inadequados</li>
+      <li>Destacar produtos na homepage</li>
+    </ul>
+    <ul>
+      <li>Alterar número de WhatsApp de suporte</li>
+      <li>Actualizar IBAN e dados bancários</li>
+      <li>Definir preço do plano Premium</li>
+      <li>Ver estatísticas gerais da plataforma</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ 13. SUPORTE ============ -->
+<div class="section page-break">
+  <div class="section-header">
+    <div class="section-num">13</div>
+    <div><div class="section-title">Contacto e Suporte</div><div class="section-desc">Como obter ajuda</div></div>
+  </div>
+  <div class="two-col">
+    <div class="col-box" style="text-align:center;padding:24px;">
+      <div style="font-size:36px;margin-bottom:8px;">💬</div>
+      <div style="font-weight:800;color:#1e293b;margin-bottom:4px;">WhatsApp</div>
+      <div style="font-size:13px;color:#64748b;margin-bottom:12px;">Suporte rápido e directo</div>
+      <div style="background:#16a34a;color:#fff;font-weight:700;padding:10px 20px;border-radius:999px;font-size:13px;">+244 934 023 228</div>
+    </div>
+    <div class="col-box">
+      <h4>Perguntas Frequentes</h4>
+      <ul style="list-style:none;padding:0;">
+        <li style="padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:12px;color:#475569;"><strong>Como activo o Premium?</strong><br/>Paga via Multicaixa Express e envia o comprovativo.</li>
+        <li style="padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:12px;color:#475569;"><strong>O pagamento é online?</strong><br/>Não. O pagamento é feito presencialmente na entrega.</li>
+        <li style="padding:6px 0;font-size:12px;color:#475569;"><strong>Quanto tempo leva a aprovação?</strong><br/>Até 2 horas em dias úteis após envio do comprovativo.</li>
+      </ul>
+    </div>
+  </div>
+  <div style="margin-top:24px;background:linear-gradient(135deg,#1e293b,#0f172a);border-radius:16px;padding:24px;text-align:center;color:#fff;">
+    <div style="font-size:28px;font-weight:900;margin-bottom:4px;">ZUNGA <span style="color:#f97316;">🇦🇴</span></div>
+    <div style="color:#94a3b8;font-size:13px;">O marketplace digital angolano</div>
+    <div style="margin-top:12px;color:#64748b;font-size:11px;">Versão 1.0 · 2025</div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<div class="doc-footer no-print">
+  <p>🖨️ Para guardar como PDF: <strong>Ctrl+P</strong> → selecciona <strong>"Guardar como PDF"</strong> → <strong>Guardar</strong></p>
+</div>
+
+</body>
+</html>
