@@ -7,6 +7,7 @@ import { Users, Package, Eye, Heart, ShoppingBag, UserCheck, Clock, Settings } f
 import AdminVendedores from '@/components/AdminVendedores';
 import AdminProdutos from '@/components/AdminProdutos';
 import AdminSettings from '@/components/AdminSettings';
+import AdminResetDados from '@/components/AdminResetDados';
 
 export default async function AdminPage() {
   const session = await getServerSession(authOptions);
@@ -94,7 +95,7 @@ export default async function AdminPage() {
         </div>
 
         {/* Settings */}
-        <div className="bg-white rounded-2xl border border-slate-100">
+        <div className="bg-white rounded-2xl border border-slate-100 mb-6">
           <div className="p-5 border-b border-slate-100">
             <h2 className="font-bold text-slate-800 flex items-center gap-2">
               <Settings size={18} /> Configurações da Plataforma
@@ -102,6 +103,17 @@ export default async function AdminPage() {
             <p className="text-xs text-slate-400 mt-0.5">WhatsApp de suporte, dados bancários e preço Premium</p>
           </div>
           <AdminSettings initial={settingsMap} />
+        </div>
+
+        {/* Danger zone */}
+        <div className="bg-white rounded-2xl border border-red-100">
+          <div className="p-5 border-b border-red-100">
+            <h2 className="font-bold text-red-700 flex items-center gap-2">
+              <Users size={18} /> Zona de Perigo
+            </h2>
+            <p className="text-xs text-slate-400 mt-0.5">Acções irreversíveis sobre os dados da plataforma</p>
+          </div>
+          <AdminResetDados />
         </div>
       </div>
     </div>
