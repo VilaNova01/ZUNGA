@@ -85,7 +85,7 @@ export default function EscolhaPage() {
               }
             </div>
             <div className="text-center">
-              <p className="font-bold text-slate-800 text-lg">Vender</p>
+              <p className="font-bold text-slate-800 text-lg">Criar Conta</p>
               <p className="text-xs text-slate-500 mt-1">Publica produtos e gere as tuas vendas</p>
             </div>
           </button>
