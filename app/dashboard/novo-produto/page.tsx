@@ -35,7 +35,7 @@ export default function NovoProdutoPage() {
   }
   // Remove pontos antes de enviar: "10.000" → 10000
   function parsePrice(val: string): number {
-    return parseFloat(val.replace(/\./g, '')) || 0;
+    return parseInt(val.replace(/\D/g, ''), 10) || 0;
   }
 
   const selectedCategory = categories
