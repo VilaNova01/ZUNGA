@@ -24,6 +24,20 @@ export default function NovoProdutoPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Formata "10000" → "10.000" e aceita input com ponto (separador de milhares angolano)
+  function formatPrice(val: string): string {
+    const digits = val.replace(/\D/g, '');
+    if (!digits) return '';
+    return parseInt(digits, 10).toLocaleString('pt-AO');
+  }
+  function handlePriceChange(field: 'price' | 'offerPrice', val: string) {
+    setForm(f => ({ ...f, [field]: formatPrice(val) }));
+  }
+  // Remove pontos antes de enviar: "10.000" → 10000
+  function parsePrice(val: string): number {
+    return parseFloat(val.replace(/\./g, '')) || 0;
+  }
+
   const selectedCategory = categories
     .flatMap((c: any) => [c, ...(c.children || []).flatMap((ch: any) => [ch, ...(ch.children || [])])])
     .find((c: any) => c.id === form.categoryId);
@@ -68,8 +82,8 @@ export default function NovoProdutoPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         ...form,
-        price: parseFloat(form.price),
-        offerPrice: form.offerPrice ? parseFloat(form.offerPrice) : null,
+        price: parsePrice(form.price),
+        offerPrice: form.offerPrice ? parsePrice(form.offerPrice) : null,
         images,
         colors: JSON.stringify(selectedColors),
         sizes: JSON.stringify(selectedSizes),
@@ -243,17 +257,28 @@ export default function NovoProdutoPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">Preço (Kz) *</label>
-                <input type="number" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} required min="0"
-                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-orange-400"
-                  placeholder="0" />
+                <div className="relative">
+                  <input
+                    type="text" inputMode="numeric" value={form.price} required
+                    onChange={e => handlePriceChange('price', e.target.value)}
+                    className="w-full border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm focus:outline-none focus:border-orange-400"
+                    placeholder="Ex: 10.000" />
+                  <span className="absolute right-3 top-3 text-xs text-slate-400 font-medium">Kz</span>
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">Preço de Oferta (opcional)</label>
-                <input type="number" value={form.offerPrice} onChange={e => setForm(f => ({ ...f, offerPrice: e.target.value }))} min="0"
-                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-orange-400"
-                  placeholder="Deixar vazio se não tiver" />
+                <div className="relative">
+                  <input
+                    type="text" inputMode="numeric" value={form.offerPrice}
+                    onChange={e => handlePriceChange('offerPrice', e.target.value)}
+                    className="w-full border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm focus:outline-none focus:border-orange-400"
+                    placeholder="Deixar vazio" />
+                  <span className="absolute right-3 top-3 text-xs text-slate-400 font-medium">Kz</span>
+                </div>
               </div>
             </div>
+            <p className="text-xs text-slate-400">Usa o ponto como separador de milhares — ex: 10.000 · 250.000</p>
           </div>
 
           {/* Delivery */}

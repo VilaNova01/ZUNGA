@@ -1,13 +1,11 @@
 'use client';
 import { useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ShoppingBag, Eye, EyeOff } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 
 function RegistoForm() {
-  const params = useSearchParams();
-  const [role, setRole] = useState<'BUYER' | 'SELLER'>(params.get('role') === 'seller' ? 'SELLER' : 'BUYER');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -20,21 +18,19 @@ function RegistoForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true); setError('');
+    // Registo sempre como BUYER — o utilizador escolhe o papel a seguir
     const res = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, phone, password, role }),
+      body: JSON.stringify({ name, email, phone, password, role: 'BUYER' }),
     });
     const data = await res.json();
     if (!res.ok) { setError(data.error); setLoading(false); return; }
 
-    if (role === 'SELLER') {
-      router.push('/login?msg=pendente');
-    } else {
-      await signIn('credentials', { email, password, redirect: false });
-      router.push('/');
-      router.refresh();
-    }
+    // Fazer login automático e redirecionar para escolher Comprar / Vender
+    await signIn('credentials', { email, password, redirect: false });
+    router.push('/escolha');
+    router.refresh();
   }
 
   return (
@@ -48,25 +44,10 @@ function RegistoForm() {
             <span className="text-2xl font-black text-orange-500">ZUNGA</span>
           </Link>
           <h1 className="text-2xl font-bold text-slate-800">Criar conta</h1>
+          <p className="text-sm text-slate-500 mt-1">É rápido e gratuito</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
-          {/* Role toggle */}
-          <div className="flex bg-slate-100 rounded-xl p-1 mb-6">
-            {(['BUYER', 'SELLER'] as const).map(r => (
-              <button key={r} onClick={() => setRole(r)}
-                className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${role === r ? 'bg-white shadow text-orange-600' : 'text-slate-500'}`}>
-                {r === 'BUYER' ? '🛒 Comprador' : '🏪 Vendedor'}
-              </button>
-            ))}
-          </div>
-
-          {role === 'SELLER' && (
-            <div className="bg-orange-50 border border-orange-100 rounded-xl p-3 mb-5 text-xs text-orange-700">
-              A conta de vendedor requer aprovação do administrador antes de poderes publicar produtos.
-            </div>
-          )}
-
           {error && <div className="bg-red-50 text-red-600 text-sm rounded-xl px-4 py-3 mb-5">{error}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-4">
