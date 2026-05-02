@@ -35,5 +35,24 @@ export async function PATCH(req: Request) {
   }
 
   const user = await prisma.user.update({ where: { id: userId }, data });
+
+  if (status === 'ACTIVE') {
+    await prisma.notification.create({
+      data: {
+        userId,
+        type: 'ACCOUNT_APPROVED',
+        message: 'A tua conta de vendedor foi aprovada! Já podes publicar os teus produtos.',
+      },
+    });
+  } else if (status === 'SUSPENDED') {
+    await prisma.notification.create({
+      data: {
+        userId,
+        type: 'ACCOUNT_SUSPENDED',
+        message: 'A tua conta de vendedor foi suspensa. Contacta o suporte para mais informações.',
+      },
+    });
+  }
+
   return NextResponse.json({ ok: true, user });
 }

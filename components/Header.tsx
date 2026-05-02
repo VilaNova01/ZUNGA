@@ -1,16 +1,32 @@
 'use client';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
-import { useState } from 'react';
-import { Search, ShoppingBag, User, Menu, X, LogOut, LayoutDashboard, Shield } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Search, ShoppingBag, User, Menu, X, LogOut, LayoutDashboard, Shield, Bell } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function Header() {
   const { data: session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [notifOpen, setNotifOpen] = useState(false);
   const router = useRouter();
   const user = session?.user as any;
+
+  useEffect(() => {
+    if (!session) return;
+    fetch('/api/notificacoes').then(r => r.json()).then(data => {
+      if (Array.isArray(data)) setNotifications(data);
+    });
+  }, [session]);
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  async function markAllRead() {
+    await fetch('/api/notificacoes', { method: 'PATCH' });
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  }
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -57,8 +73,39 @@ export default function Header() {
                     <LayoutDashboard size={15} /> Painel
                   </Link>
                 )}
+                {/* Notification Bell */}
+                <div className="relative">
+                  <button
+                    onClick={() => { setNotifOpen(!notifOpen); setMenuOpen(false); if (!notifOpen && unreadCount > 0) markAllRead(); }}
+                    className="relative p-1.5 text-slate-500 hover:text-orange-500"
+                  >
+                    <Bell size={18} />
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    )}
+                  </button>
+                  {notifOpen && (
+                    <div className="absolute right-0 top-10 bg-white rounded-xl shadow-lg border border-slate-100 w-80 z-50 overflow-hidden">
+                      <div className="px-4 py-3 border-b border-slate-100 font-semibold text-sm text-slate-700">Notificações</div>
+                      {notifications.length === 0 ? (
+                        <p className="px-4 py-6 text-sm text-slate-400 text-center">Nenhuma notificação</p>
+                      ) : (
+                        <ul className="max-h-72 overflow-y-auto divide-y divide-slate-50">
+                          {notifications.map(n => (
+                            <li key={n.id} className={`px-4 py-3 text-sm ${n.read ? 'text-slate-500' : 'text-slate-800 bg-orange-50'}`}>
+                              <p>{n.message}</p>
+                              <p className="text-xs text-slate-400 mt-0.5">{new Date(n.createdAt).toLocaleDateString('pt-AO')}</p>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
+                </div>
                 <button
-                  onClick={() => setMenuOpen(!menuOpen)}
+                  onClick={() => { setMenuOpen(!menuOpen); setNotifOpen(false); }}
                   className="flex items-center gap-2 bg-slate-100 rounded-full px-3 py-1.5 text-sm font-medium hover:bg-slate-200"
                 >
                   <User size={15} />

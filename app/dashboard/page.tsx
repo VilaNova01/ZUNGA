@@ -4,8 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import Header from '@/components/Header';
 import Link from 'next/link';
-import { Package, Plus, Star, Eye, Heart, AlertCircle } from 'lucide-react';
-import { FREE_PRODUCT_LIMIT } from '@/lib/categories';
+import { Package, Plus, Eye, Heart, AlertCircle } from 'lucide-react';
 import DashboardProdutos from '@/components/DashboardProdutos';
 
 export default async function DashboardPage() {
@@ -38,8 +37,6 @@ export default async function DashboardPage() {
   const activeProducts = user.products.filter(p => p.status === 'ACTIVE');
   const totalViews = user.products.reduce((s, p) => s + p.views, 0);
   const totalLikes = user.products.reduce((s, p) => s + p._count.likes, 0);
-  const canAdd = user.isPremium || user.products.length < FREE_PRODUCT_LIMIT;
-  const premiumExpiry = user.premiumUntil ? new Date(user.premiumUntil).toLocaleDateString('pt-AO') : null;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -51,39 +48,10 @@ export default async function DashboardPage() {
             <h1 className="text-2xl font-black text-slate-800">Olá, {user.name.split(' ')[0]}! 👋</h1>
             <p className="text-slate-500 text-sm">Painel do vendedor</p>
           </div>
-          {canAdd ? (
-            <Link href="/dashboard/novo-produto" className="flex items-center gap-2 bg-orange-500 text-white font-bold px-5 py-2.5 rounded-full hover:bg-orange-600 transition-colors">
-              <Plus size={16} /> Novo Produto
-            </Link>
-          ) : (
-            <Link href="/dashboard/assinatura" className="flex items-center gap-2 bg-slate-800 text-white font-bold px-5 py-2.5 rounded-full hover:bg-slate-700">
-              <Star size={16} /> Upgrade Premium
-            </Link>
-          )}
+          <Link href="/dashboard/novo-produto" className="flex items-center gap-2 bg-orange-500 text-white font-bold px-5 py-2.5 rounded-full hover:bg-orange-600 transition-colors">
+            <Plus size={16} /> Novo Produto
+          </Link>
         </div>
-
-        {/* Premium Banner */}
-        {!user.isPremium && (
-          <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl p-5 mb-6 text-white flex items-center justify-between">
-            <div>
-              <p className="font-bold">Plano Gratuito — {user.products.length}/{FREE_PRODUCT_LIMIT} produtos</p>
-              <p className="text-orange-100 text-sm">Faça upgrade para publicar produtos ilimitados!</p>
-            </div>
-            <Link href="/dashboard/assinatura" className="bg-white text-orange-600 font-bold px-4 py-2 rounded-full text-sm hover:shadow-md">
-              Premium — 5.000 Kz/mês
-            </Link>
-          </div>
-        )}
-
-        {user.isPremium && (
-          <div className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl p-5 mb-6 text-white flex items-center gap-3">
-            <Star size={24} className="text-orange-400 fill-orange-400" />
-            <div>
-              <p className="font-bold">Vendedor Premium ✨</p>
-              <p className="text-slate-400 text-sm">Produtos ilimitados · Válido até {premiumExpiry}</p>
-            </div>
-          </div>
-        )}
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 mb-8">

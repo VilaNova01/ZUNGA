@@ -7,7 +7,7 @@ import { ShoppingBag, Eye, EyeOff } from 'lucide-react';
 import { Suspense } from 'react';
 
 function LoginForm() {
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState('');
@@ -18,10 +18,20 @@ function LoginForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true); setError('');
-    const res = await signIn('credentials', { email, password, redirect: false });
+    const res = await signIn('credentials', { email: identifier, password, redirect: false });
     setLoading(false);
-    if (res?.error) { setError('Email ou password incorrectos.'); return; }
-    router.push(params.get('callbackUrl') || '/');
+    if (res?.error) { setError('Credenciais incorrectas. Verifica o email/telefone e a password.'); return; }
+    // Fetch session to determine role for redirect
+    const sessionRes = await fetch('/api/auth/session');
+    const session = await sessionRes.json();
+    const callbackUrl = params.get('callbackUrl');
+    if (callbackUrl) {
+      router.push(callbackUrl);
+    } else if ((session?.user as any)?.role === 'SELLER') {
+      router.push('/dashboard');
+    } else {
+      router.push('/');
+    }
     router.refresh();
   }
 
@@ -43,10 +53,10 @@ function LoginForm() {
           {error && <div className="bg-red-50 text-red-600 text-sm rounded-xl px-4 py-3 mb-5">{error}</div>}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} required
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">Email ou Telefone</label>
+              <input type="text" value={identifier} onChange={e => setIdentifier(e.target.value)} required
                 className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
-                placeholder="o-teu@email.com" />
+                placeholder="o-teu@email.com ou +244 9XX XXX XXX" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
