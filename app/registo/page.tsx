@@ -25,8 +25,8 @@ function RegistoForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name,
-          email: mode === 'email' ? email : undefined,
-          phone: mode === 'phone' ? phone : undefined,
+          email: mode === 'email' ? email : null,
+          phone: mode === 'phone' ? phone : null,
           password,
           role: 'BUYER',
         }),

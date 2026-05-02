@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { FREE_PRODUCT_LIMIT } from '@/lib/categories';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -59,13 +58,6 @@ export async function POST(req: Request) {
   const user = await prisma.user.findUnique({ where: { id: (session.user as any).id } });
   if (!user || user.role !== 'SELLER') return NextResponse.json({ error: 'Apenas vendedores podem publicar.' }, { status: 403 });
   if (user.status !== 'ACTIVE') return NextResponse.json({ error: 'Conta pendente de aprovação.' }, { status: 403 });
-
-  if (!user.isPremium) {
-    const count = await prisma.product.count({ where: { sellerId: user.id, status: { not: 'REJECTED' } } });
-    if (count >= FREE_PRODUCT_LIMIT) {
-      return NextResponse.json({ error: `Plano gratuito permite apenas ${FREE_PRODUCT_LIMIT} produtos. Faça upgrade para publicar mais.` }, { status: 403 });
-    }
-  }
 
   const body = await req.json();
   const product = await prisma.product.create({

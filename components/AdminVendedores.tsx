@@ -4,7 +4,7 @@ import { Check, X, Star, StarOff, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 
 interface Seller {
-  id: string; name: string; email: string; phone?: string;
+  id: string; name: string; email: string | null; phone?: string | null;
   status: string; isPremium: boolean; premiumUntil?: string;
   province?: string; createdAt: string; _count: { products: number };
 }
@@ -56,7 +56,7 @@ export default function AdminVendedores({ initialSellers }: { initialSellers: Se
                 <p className="font-semibold text-slate-800 truncate">{seller.name}</p>
                 {seller.isPremium && <Star size={13} className="text-orange-400 fill-orange-400 shrink-0" />}
               </div>
-              <p className="text-xs text-slate-500 truncate">{seller.email} · {seller.phone || 'sem tel.'}</p>
+              <p className="text-xs text-slate-500 truncate">{[seller.email, seller.phone].filter(Boolean).join(' · ') || 'sem contacto'}</p>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${seller.status === 'ACTIVE' ? 'bg-green-100 text-green-600' : seller.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-500'}`}>
                   {seller.status === 'ACTIVE' ? 'Activo' : seller.status === 'PENDING' ? 'Pendente' : 'Suspenso'}

@@ -3,7 +3,12 @@ import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 
 export async function POST(req: Request) {
-  const { name, email, password, phone, role } = await req.json();
+  const body = await req.json();
+  const name     = body.name?.trim();
+  const email    = body.email?.trim() || null;
+  const phone    = body.phone?.trim() || null;
+  const password = body.password;
+  const role     = body.role;
   if (!name || !password) return NextResponse.json({ error: 'Campos obrigatórios em falta.' }, { status: 400 });
   if (!email && !phone) return NextResponse.json({ error: 'Indica um email ou número de telefone.' }, { status: 400 });
 
