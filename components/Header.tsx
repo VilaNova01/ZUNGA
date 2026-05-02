@@ -2,7 +2,7 @@
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { Search, ShoppingBag, User, Menu, X, LogOut, LayoutDashboard, Shield, Bell } from 'lucide-react';
+import { Search, ShoppingBag, User, Menu, X, LogOut, LayoutDashboard, Shield, Bell, ShoppingCart, Store } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function Header() {
@@ -68,11 +68,28 @@ export default function Header() {
                     <Shield size={15} /> Admin
                   </Link>
                 )}
-                {user?.role === 'SELLER' && (
-                  <Link href="/dashboard" className="hidden sm:flex items-center gap-1 text-sm text-orange-600 font-medium hover:text-orange-700">
-                    <LayoutDashboard size={15} /> Painel
+                {/* Comprar / Vender mode tabs */}
+                <div className="hidden sm:flex items-center bg-slate-100 rounded-full p-1 gap-0.5">
+                  <Link
+                    href="/"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold text-slate-600 hover:bg-white hover:text-orange-500 hover:shadow-sm transition-all"
+                  >
+                    <ShoppingCart size={14} /> Comprar
                   </Link>
-                )}
+                  <Link
+                    href={user?.role === 'SELLER' ? '/dashboard' : '/vender'}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold text-slate-600 hover:bg-white hover:text-orange-500 hover:shadow-sm transition-all"
+                  >
+                    <Store size={14} />
+                    Vender
+                    {user?.role === 'SELLER' && user?.status === 'PENDING' && (
+                      <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block ml-0.5" title="Aprovação pendente" />
+                    )}
+                    {user?.role === 'SELLER' && user?.status === 'ACTIVE' && (
+                      <span className="w-2 h-2 rounded-full bg-green-400 inline-block ml-0.5" />
+                    )}
+                  </Link>
+                </div>
                 {/* Notification Bell */}
                 <div className="relative">
                   <button
@@ -114,7 +131,18 @@ export default function Header() {
                 {menuOpen && (
                   <div className="absolute right-4 top-16 bg-white rounded-xl shadow-lg border border-slate-100 py-2 min-w-44 z-50">
                     {user?.role === 'ADMIN' && <Link href="/admin" className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50"><Shield size={14} /> Admin</Link>}
-                    {user?.role === 'SELLER' && <Link href="/dashboard" className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50"><LayoutDashboard size={14} /> Meu Painel</Link>}
+                    <Link href="/" className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50 sm:hidden">
+                      <ShoppingCart size={14} className="text-blue-500" /> Comprar
+                    </Link>
+                    <Link
+                      href={user?.role === 'SELLER' ? '/dashboard' : '/vender'}
+                      className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50 sm:hidden"
+                    >
+                      <Store size={14} className="text-orange-500" />
+                      Vender
+                      {user?.role === 'SELLER' && user?.status === 'PENDING' && <span className="text-xs text-yellow-600 font-medium">(pendente)</span>}
+                    </Link>
+                    {user?.role === 'SELLER' && <Link href="/dashboard" className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50 hidden sm:flex"><LayoutDashboard size={14} /> Meu Painel</Link>}
                     <button onClick={() => signOut({ callbackUrl: '/' })} className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-slate-50 w-full">
                       <LogOut size={14} /> Sair
                     </button>

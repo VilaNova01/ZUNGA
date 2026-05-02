@@ -21,7 +21,7 @@ export default async function DashboardPage() {
     },
   });
 
-  if (!user || user.role !== 'SELLER') redirect('/');
+  if (!user || user.role !== 'SELLER') redirect('/vender');
   if (user.status === 'PENDING') {
     return (
       <div className="min-h-screen"><Header />

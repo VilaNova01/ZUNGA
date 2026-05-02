@@ -38,7 +38,7 @@ function RegistoForm() {
       const identifier = mode === 'email' ? email : phone;
       const result = await signIn('credentials', { email: identifier, password, redirect: false });
       if (result?.error) { setError('Conta criada mas não foi possível entrar. Tenta fazer login.'); return; }
-      router.push('/escolha');
+      router.push('/');
       router.refresh();
     } catch {
       setError('Erro de ligação. Tenta novamente.');
