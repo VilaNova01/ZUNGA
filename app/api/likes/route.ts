@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   if (!session?.user) return NextResponse.json({ error: 'Não autenticado.' }, { status: 401 });
 
   const { productId } = await req.json();
-  const user = await prisma.user.findUnique({ where: { email: session.user.email! } });
+  const user = await prisma.user.findUnique({ where: { id: (session.user as any).id } });
   if (!user) return NextResponse.json({ error: 'Utilizador não encontrado.' }, { status: 404 });
 
   const existing = await prisma.like.findUnique({ where: { userId_productId: { userId: user.id, productId } } });

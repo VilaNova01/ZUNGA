@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
+  if (!session?.user) {
     return NextResponse.json({ error: 'Não autenticado.' }, { status: 401 });
   }
 
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
   const status = role === 'SELLER' ? 'PENDING' : 'ACTIVE';
 
   await prisma.user.update({
-    where: { email: session.user.email },
+    where: { id: (session.user as any).id },
     data: { role, status },
   });
 

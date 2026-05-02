@@ -56,7 +56,7 @@ export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user) return NextResponse.json({ error: 'Não autenticado.' }, { status: 401 });
 
-  const user = await prisma.user.findUnique({ where: { email: session.user.email! } });
+  const user = await prisma.user.findUnique({ where: { id: (session.user as any).id } });
   if (!user || user.role !== 'SELLER') return NextResponse.json({ error: 'Apenas vendedores podem publicar.' }, { status: 403 });
   if (user.status !== 'ACTIVE') return NextResponse.json({ error: 'Conta pendente de aprovação.' }, { status: 403 });
 

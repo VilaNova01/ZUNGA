@@ -12,7 +12,7 @@ export default async function DashboardPage() {
   if (!session?.user) redirect('/login');
 
   const user = await prisma.user.findUnique({
-    where: { email: session.user.email! },
+    where: { id: (session.user as any).id },
     include: {
       products: {
         include: { category: true, _count: { select: { likes: true } } },

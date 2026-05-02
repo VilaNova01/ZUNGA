@@ -13,7 +13,7 @@ export async function GET() {
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user) return NextResponse.json({ error: 'Não autenticado.' }, { status: 401 });
-  const user = await prisma.user.findUnique({ where: { email: session.user.email! } });
+  const user = await prisma.user.findUnique({ where: { id: (session.user as any).id } });
   if (!user || user.role !== 'ADMIN') return NextResponse.json({ error: 'Sem permissão.' }, { status: 403 });
 
   const body: Record<string, string> = await req.json();

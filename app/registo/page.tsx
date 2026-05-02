@@ -2,10 +2,11 @@
 import { useState, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ShoppingBag, Eye, EyeOff } from 'lucide-react';
+import { ShoppingBag, Eye, EyeOff, Mail, Phone } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 
 function RegistoForm() {
+  const [mode, setMode] = useState<'email' | 'phone'>('email');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -18,17 +19,23 @@ function RegistoForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true); setError('');
-    // Registo sempre como BUYER — o utilizador escolhe o papel a seguir
     const res = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, phone, password, role: 'BUYER' }),
+      body: JSON.stringify({
+        name,
+        email: mode === 'email' ? email : undefined,
+        phone: mode === 'phone' ? phone : undefined,
+        password,
+        role: 'BUYER',
+      }),
     });
     const data = await res.json();
     if (!res.ok) { setError(data.error); setLoading(false); return; }
 
-    // Fazer login automático e redirecionar para escolher Comprar / Vender
-    await signIn('credentials', { email, password, redirect: false });
+    // Login automático com o identificador correcto
+    const identifier = mode === 'email' ? email : phone;
+    await signIn('credentials', { email: identifier, password, redirect: false });
     router.push('/escolha');
     router.refresh();
   }
@@ -50,6 +57,28 @@ function RegistoForm() {
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
           {error && <div className="bg-red-50 text-red-600 text-sm rounded-xl px-4 py-3 mb-5">{error}</div>}
 
+          {/* Toggle Email / Telefone */}
+          <div className="flex bg-slate-100 rounded-xl p-1 mb-6">
+            <button
+              type="button"
+              onClick={() => setMode('email')}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-semibold transition-all ${
+                mode === 'email' ? 'bg-white text-orange-500 shadow-sm' : 'text-slate-500'
+              }`}
+            >
+              <Mail size={15} /> Email
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode('phone')}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-semibold transition-all ${
+                mode === 'phone' ? 'bg-white text-orange-500 shadow-sm' : 'text-slate-500'
+              }`}
+            >
+              <Phone size={15} /> Telefone
+            </button>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1.5">Nome completo</label>
@@ -57,18 +86,23 @@ function RegistoForm() {
                 className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
                 placeholder="O teu nome" />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} required
-                className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
-                placeholder="o-teu@email.com" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Telefone / WhatsApp</label>
-              <input type="tel" value={phone} onChange={e => setPhone(e.target.value)}
-                className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
-                placeholder="+244 9XX XXX XXX" />
-            </div>
+
+            {mode === 'email' ? (
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)} required
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+                  placeholder="o-teu@email.com" />
+              </div>
+            ) : (
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">Número de Telefone / WhatsApp</label>
+                <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} required
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+                  placeholder="+244 9XX XXX XXX" />
+              </div>
+            )}
+
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
               <div className="relative">
@@ -80,6 +114,7 @@ function RegistoForm() {
                 </button>
               </div>
             </div>
+
             <button type="submit" disabled={loading}
               className="w-full bg-orange-500 text-white font-bold py-3 rounded-xl hover:bg-orange-600 transition-colors disabled:opacity-60 mt-2">
               {loading ? 'A criar conta...' : 'Criar Conta'}

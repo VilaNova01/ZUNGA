@@ -9,7 +9,7 @@ export default async function AssinaturaPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user) redirect('/login');
   const [user, rawSettings] = await Promise.all([
-    prisma.user.findUnique({ where: { email: session.user.email! } }),
+    prisma.user.findUnique({ where: { id: (session.user as any).id } }),
     prisma.setting.findMany(),
   ]);
   if (!user || user.role !== 'SELLER') redirect('/');

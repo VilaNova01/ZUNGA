@@ -12,7 +12,7 @@ import AdminResetDados from '@/components/AdminResetDados';
 export default async function AdminPage() {
   const session = await getServerSession(authOptions);
   if (!session?.user) redirect('/login');
-  const user = await prisma.user.findUnique({ where: { email: session.user.email! } });
+  const user = await prisma.user.findUnique({ where: { id: (session.user as any).id } });
   if (!user || user.role !== 'ADMIN') redirect('/');
 
   const [totalUsers, totalSellers, pendingSellers, totalProducts, totalViews, totalLikes, recentSellers, allProducts, allSettings] = await Promise.all([

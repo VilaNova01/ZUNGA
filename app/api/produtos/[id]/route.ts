@@ -23,7 +23,7 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ id: str
   const session = await getServerSession(authOptions);
   if (!session?.user) return NextResponse.json({ error: 'Não autenticado.' }, { status: 401 });
 
-  const user = await prisma.user.findUnique({ where: { email: session.user.email! } });
+  const user = await prisma.user.findUnique({ where: { id: (session.user as any).id } });
   const product = await prisma.product.findUnique({ where: { id } });
 
   if (!product) return NextResponse.json({ error: 'Não encontrado.' }, { status: 404 });
