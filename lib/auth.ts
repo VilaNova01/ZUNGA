@@ -23,7 +23,8 @@ export const authOptions: NextAuthOptions = {
         const valid = await bcrypt.compare(credentials.password, user.password);
         if (!valid) return null;
         if (user.status === 'SUSPENDED') throw new Error('Conta suspensa.');
-        return { id: user.id, name: user.name, email: user.email, role: user.role, isPremium: user.isPremium };
+        // NextAuth requires a non-null email; use phone as fallback for phone-only accounts
+        return { id: user.id, name: user.name, email: user.email ?? user.phone ?? user.id, role: user.role, isPremium: user.isPremium };
       },
     }),
   ],

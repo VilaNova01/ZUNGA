@@ -19,25 +19,32 @@ function RegistoForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true); setError('');
-    const res = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name,
-        email: mode === 'email' ? email : undefined,
-        phone: mode === 'phone' ? phone : undefined,
-        password,
-        role: 'BUYER',
-      }),
-    });
-    const data = await res.json();
-    if (!res.ok) { setError(data.error); setLoading(false); return; }
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email: mode === 'email' ? email : undefined,
+          phone: mode === 'phone' ? phone : undefined,
+          password,
+          role: 'BUYER',
+        }),
+      });
+      let data: any = {};
+      try { data = await res.json(); } catch {}
+      if (!res.ok) { setError(data.error || 'Erro ao criar conta.'); return; }
 
-    // Login automático com o identificador correcto
-    const identifier = mode === 'email' ? email : phone;
-    await signIn('credentials', { email: identifier, password, redirect: false });
-    router.push('/escolha');
-    router.refresh();
+      const identifier = mode === 'email' ? email : phone;
+      const result = await signIn('credentials', { email: identifier, password, redirect: false });
+      if (result?.error) { setError('Conta criada mas não foi possível entrar. Tenta fazer login.'); return; }
+      router.push('/escolha');
+      router.refresh();
+    } catch {
+      setError('Erro de ligação. Tenta novamente.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
