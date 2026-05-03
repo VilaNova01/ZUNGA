@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   }
 
   const hash = await bcrypt.hash(password, 10);
-  const status = role === 'SELLER' ? 'PENDING' : 'ACTIVE';
+  const status = 'ACTIVE';
 
   const user = await prisma.user.create({
     data: { name, email: email || null, password: hash, phone: phone || null, role: role || 'BUYER', status },

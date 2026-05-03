@@ -82,10 +82,7 @@ export default function Header() {
                   >
                     <Store size={14} />
                     Vender
-                    {user?.role === 'SELLER' && user?.status === 'PENDING' && (
-                      <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block ml-0.5" title="Aprovação pendente" />
-                    )}
-                    {user?.role === 'SELLER' && user?.status === 'ACTIVE' && (
+                    {user?.role === 'SELLER' && (
                       <span className="w-2 h-2 rounded-full bg-green-400 inline-block ml-0.5" />
                     )}
                   </Link>
@@ -140,7 +137,6 @@ export default function Header() {
                     >
                       <Store size={14} className="text-orange-500" />
                       Vender
-                      {user?.role === 'SELLER' && user?.status === 'PENDING' && <span className="text-xs text-yellow-600 font-medium">(pendente)</span>}
                     </Link>
                     {user?.role === 'SELLER' && <Link href="/dashboard" className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-slate-50 hidden sm:flex"><LayoutDashboard size={14} /> Meu Painel</Link>}
                     <button onClick={() => signOut({ callbackUrl: '/' })} className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-slate-50 w-full">

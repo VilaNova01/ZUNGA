@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Role inválido.' }, { status: 400 });
   }
 
-  const status = role === 'SELLER' ? 'PENDING' : 'ACTIVE';
+  const status = 'ACTIVE';
 
   await prisma.user.update({
     where: { id: (session.user as any).id },

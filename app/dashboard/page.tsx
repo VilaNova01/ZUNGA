@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import Header from '@/components/Header';
 import Link from 'next/link';
-import { Package, Plus, Eye, Heart, AlertCircle } from 'lucide-react';
+import { Package, Plus, Eye, Heart } from 'lucide-react';
 import DashboardProdutos from '@/components/DashboardProdutos';
 
 export default async function DashboardPage() {
@@ -22,18 +22,6 @@ export default async function DashboardPage() {
   });
 
   if (!user || user.role !== 'SELLER') redirect('/vender');
-  if (user.status === 'PENDING') {
-    return (
-      <div className="min-h-screen"><Header />
-        <div className="max-w-lg mx-auto px-4 py-20 text-center">
-          <AlertCircle size={48} className="text-orange-400 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-slate-800 mb-2">Conta em análise</h1>
-          <p className="text-slate-500">A tua conta de vendedor está a ser analisada. Receberás aprovação em breve.</p>
-        </div>
-      </div>
-    );
-  }
-
   const activeProducts = user.products.filter(p => p.status === 'ACTIVE');
   const totalViews = user.products.reduce((s, p) => s + p.views, 0);
   const totalLikes = user.products.reduce((s, p) => s + p._count.likes, 0);
