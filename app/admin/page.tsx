@@ -3,7 +3,7 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import Header from '@/components/Header';
-import { Users, Package, Eye, Heart, ShoppingBag, UserCheck, Clock, Settings } from 'lucide-react';
+import { Users, Package, Eye, Heart, ShoppingBag, UserCheck, Clock, Settings, ShoppingCart, Store } from 'lucide-react';
 import AdminVendedores from '@/components/AdminVendedores';
 import AdminProdutos from '@/components/AdminProdutos';
 import AdminSettings from '@/components/AdminSettings';
@@ -15,7 +15,7 @@ export default async function AdminPage() {
   const user = await prisma.user.findUnique({ where: { id: (session.user as any).id } });
   if (!user || user.role !== 'ADMIN') redirect('/');
 
-  const [totalUsers, totalSellers, pendingSellers, totalProducts, totalViews, totalLikes, recentSellers, allProducts, allSettings] = await Promise.all([
+  const [totalUsers, totalSellers, pendingSellers, totalProducts, totalViews, totalLikes, recentSellers, allUsers, allProducts, allSettings] = await Promise.all([
     prisma.user.count(),
     prisma.user.count({ where: { role: 'SELLER' } }),
     prisma.user.count({ where: { role: 'SELLER', status: 'PENDING' } }),
@@ -25,6 +25,11 @@ export default async function AdminPage() {
     prisma.user.findMany({
       where: { role: 'SELLER' },
       select: { id: true, name: true, email: true, phone: true, status: true, isPremium: true, premiumUntil: true, province: true, createdAt: true, _count: { select: { products: true } } },
+      orderBy: { createdAt: 'desc' },
+    }),
+    prisma.user.findMany({
+      where: { role: { not: 'ADMIN' } },
+      select: { id: true, name: true, email: true, phone: true, role: true, status: true, createdAt: true },
       orderBy: { createdAt: 'desc' },
     }),
     prisma.product.findMany({
@@ -71,6 +76,47 @@ export default async function AdminPage() {
               <p className="text-xs text-slate-500">{s.label}</p>
             </div>
           ))}
+        </div>
+
+        {/* All users */}
+        <div className="bg-white rounded-2xl border border-slate-100 mb-6">
+          <div className="p-5 border-b border-slate-100">
+            <h2 className="font-bold text-slate-800 flex items-center gap-2">
+              <Users size={18} /> Todos os Utilizadores
+              <span className="bg-slate-100 text-slate-600 text-xs font-bold px-2 py-0.5 rounded-full">{allUsers.length}</span>
+            </h2>
+          </div>
+          <div className="divide-y divide-slate-50">
+            {allUsers.length === 0 ? (
+              <p className="px-5 py-8 text-sm text-slate-400 text-center">Nenhum utilizador registado.</p>
+            ) : (
+              allUsers.map((u: any) => (
+                <div key={u.id} className="flex items-center justify-between px-5 py-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-slate-500">
+                      {u.name?.[0]?.toUpperCase() ?? '?'}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-800">{u.name}</p>
+                      <p className="text-xs text-slate-400">{u.email ?? u.phone ?? '—'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full ${u.role === 'SELLER' ? 'bg-orange-50 text-orange-600' : 'bg-blue-50 text-blue-600'}`}>
+                      {u.role === 'SELLER' ? <Store size={11} /> : <ShoppingCart size={11} />}
+                      {u.role === 'SELLER' ? 'Vendedor' : 'Comprador'}
+                    </span>
+                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${u.status === 'ACTIVE' ? 'bg-green-50 text-green-600' : u.status === 'PENDING' ? 'bg-yellow-50 text-yellow-600' : 'bg-red-50 text-red-600'}`}>
+                      {u.status === 'ACTIVE' ? 'Activo' : u.status === 'PENDING' ? 'Pendente' : 'Suspenso'}
+                    </span>
+                    <span className="text-xs text-slate-400 hidden sm:inline">
+                      {new Date(u.createdAt).toLocaleDateString('pt-AO')}
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
 
         {/* Sellers management */}
