@@ -151,17 +151,19 @@ export default function NovoProdutoPage() {
                 <option value="">Seleccionar categoria</option>
                 {categories.map((cat: any) => (
                   <optgroup key={cat.id} label={`${mainIcon(cat.icon)} ${cat.name}`}>
-                    {cat.children?.map((mid: any) =>
-                      mid.children?.length > 0 ? (
-                        <optgroup key={mid.id} label={`  ↳ ${mid.name}`}>
-                          {mid.children.map((child: any) => (
-                            <option key={child.id} value={child.id}>{child.name}</option>
-                          ))}
-                          <option value={mid.id}>{mid.name} (Geral)</option>
-                        </optgroup>
-                      ) : (
-                        <option key={mid.id} value={mid.id}>{mid.name}</option>
-                      )
+                    {cat.children?.flatMap((mid: any) =>
+                      mid.children?.length > 0
+                        ? [
+                            ...mid.children.map((child: any) => (
+                              <option key={child.id} value={child.id}>
+                                {mid.name} › {child.name}
+                              </option>
+                            )),
+                            <option key={`${mid.id}-geral`} value={mid.id}>
+                              {mid.name} (Geral)
+                            </option>,
+                          ]
+                        : [<option key={mid.id} value={mid.id}>{mid.name}</option>]
                     )}
                     <option value={cat.id}>{cat.name} (Geral)</option>
                   </optgroup>
